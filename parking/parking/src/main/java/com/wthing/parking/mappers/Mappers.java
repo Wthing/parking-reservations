@@ -6,8 +6,6 @@ import com.wthing.parking.repositories.UserRepo;
 
 public class Mappers {
 
-    private UserRepo userRepo;
-
     public static UserDto mapToUserDto(User user) {
         UserDto userDto = new UserDto();
         userDto.setUsername(user.getUsername());
@@ -75,5 +73,13 @@ public class Mappers {
         subscriptionDto.setType(subscription.getType());
 
         return subscriptionDto;
+    }
+
+    public static NotificationDto mapToNotificationDto(Notification notification) {
+        NotificationDto notificationDto = new NotificationDto();
+        notificationDto.setUserId(notification.getUser().getUserId());
+        notificationDto.setMessage(notification.getMessage());
+
+        return notificationDto;
     }
 }

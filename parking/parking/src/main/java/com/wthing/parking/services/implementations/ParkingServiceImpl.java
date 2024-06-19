@@ -1,6 +1,7 @@
 package com.wthing.parking.services.implementations;
 
 import com.wthing.parking.dto.ParkingSpotDto;
+import com.wthing.parking.enums.ParkingSpotStatusEnum;
 import com.wthing.parking.mappers.Mappers;
 import com.wthing.parking.models.ParkingSpot;
 import com.wthing.parking.repositories.ParkingSpotRepo;
@@ -45,5 +46,14 @@ public class ParkingServiceImpl implements ParkingService {
     @Override
     public void deleteSpotById(Long parkingSpotId) {
         parkingSpotRepo.deleteById(parkingSpotId);
+    }
+
+    @Override
+    public List<ParkingSpotDto> getAllAvailable() {
+        List<ParkingSpot> available = parkingSpotRepo.findByStatus(ParkingSpotStatusEnum.FREE);
+
+        return available.stream()
+                .map(Mappers::mapToParkingSpotDto)
+                .collect(Collectors.toList());
     }
 }

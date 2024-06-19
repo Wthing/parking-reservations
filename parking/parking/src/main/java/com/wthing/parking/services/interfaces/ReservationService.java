@@ -12,7 +12,13 @@ public interface ReservationService {
 
     Reservation create(ReservationDto reservationDto);
 
+    Reservation startReservation(Long reservationId);
+
+    Reservation endReservation(Long reservationId);
+
     ReservationDto getById(Long reservationId);
 
     void deleteById(Long reservationId);
+
+    List<ReservationDto> getActiveReservations();
 }

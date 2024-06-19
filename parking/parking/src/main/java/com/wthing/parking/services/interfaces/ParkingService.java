@@ -13,4 +13,6 @@ public interface ParkingService {
     ParkingSpot save(ParkingSpotDto parkingSpotDto);
 
     void deleteSpotById(Long parkingSpotId);
+
+    List<ParkingSpotDto> getAllAvailable();
 }

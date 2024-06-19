@@ -5,4 +5,5 @@ public class Messages {
     public static final String SPOT_NOT_FOUND = "Spot not found";
     public static final String RESERVATION_NOT_FOUND = "Reservation not found";
     public static final String SUBSCRIPTION_NOT_FOUND = "Subscription not found";
+    public static final String NOTIFICATION_NOT_FOUND = "Notification not found";
 }
