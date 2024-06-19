@@ -15,4 +15,6 @@ public interface ParkingService {
     void deleteSpotById(Long parkingSpotId);
 
     List<ParkingSpotDto> getAllAvailable();
+
+    String checkStatus(Long parkingSpotId);
 }

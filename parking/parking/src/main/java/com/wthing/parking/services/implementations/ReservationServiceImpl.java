@@ -138,4 +138,24 @@ public class ReservationServiceImpl implements ReservationService {
                 .map(Mappers::mapToReservationDto)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Reservation resolveIssue(Long reservationId, ReservationStatusEnum newStatus) {
+        Reservation reservation = reservationRepo.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException(RESERVATION_NOT_FOUND));
+
+        if (reservation != null) {
+            reservation.setStatus(newStatus);
+            if (ReservationStatusEnum.CANCELED.equals(newStatus)) {
+                ParkingSpot parkingSpot = parkingSpotRepo.findById(reservation.getParkingSpot().getParkingSpotId())
+                        .orElseThrow(() -> new IllegalArgumentException(SPOT_NOT_FOUND));
+                if (parkingSpot != null) {
+                    parkingSpot.setStatus(ParkingSpotStatusEnum.FREE);
+                    parkingSpotRepo.save(parkingSpot);
+                }
+            }
+            reservationRepo.save(reservation);
+        }
+        return null;
+    }
 }

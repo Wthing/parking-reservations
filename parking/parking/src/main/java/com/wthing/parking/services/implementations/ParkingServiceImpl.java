@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.wthing.parking.constants.Messages.*;
+import static com.wthing.parking.constants.Messages.SPOT_NOT_FOUND;
 
 @Service
 public class ParkingServiceImpl implements ParkingService {
@@ -55,5 +55,13 @@ public class ParkingServiceImpl implements ParkingService {
         return available.stream()
                 .map(Mappers::mapToParkingSpotDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public String checkStatus(Long parkingSpotId) {
+        ParkingSpot parkingSpot = parkingSpotRepo.findById(parkingSpotId)
+                .orElseThrow(() -> new IllegalArgumentException(SPOT_NOT_FOUND));
+
+        return parkingSpot != null ? parkingSpot.getStatus().toString() : SPOT_NOT_FOUND;
     }
 }
