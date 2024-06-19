@@ -10,6 +10,10 @@ public interface ParkingService {
 
     List<ParkingSpotDto> getAllSpots();
 
+    ParkingSpot create(ParkingSpotDto parkingSpotDto);
+
+    ParkingSpot updateParkingSpot(Long spotId, ParkingSpotDto parkingSpotDto);
+
     ParkingSpot save(ParkingSpotDto parkingSpotDto);
 
     void deleteSpotById(Long parkingSpotId);

@@ -158,4 +158,24 @@ public class ReservationServiceImpl implements ReservationService {
         }
         return null;
     }
+
+    @Override
+    public Reservation canselReservation(Long reservationId) {
+        Reservation reservation = reservationRepo.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException(RESERVATION_NOT_FOUND));
+
+        if (reservation != null) {
+            reservation.setStatus(ReservationStatusEnum.CANCELED);
+            ParkingSpot parkingSpot = parkingSpotRepo.findById(reservation.getParkingSpot().getParkingSpotId())
+                    .orElseThrow(() -> new IllegalArgumentException(SPOT_NOT_FOUND));
+            if (parkingSpot != null) {
+                parkingSpot.setStatus(ParkingSpotStatusEnum.FREE);
+                parkingSpotRepo.save(parkingSpot);
+            }
+
+            return reservationRepo.save(reservation);
+        }
+
+        return null;
+    }
 }

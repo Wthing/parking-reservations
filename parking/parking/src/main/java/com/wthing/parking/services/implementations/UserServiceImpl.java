@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.wthing.parking.constants.Messages.USER_NOT_FOUND;
+
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
@@ -77,7 +79,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getById(Long userId) {
         User user = userRepo.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new IllegalArgumentException(USER_NOT_FOUND));
 
         return Mappers.mapToUserDto(user);
     }
@@ -85,5 +87,35 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteById(Long userId) {
         userRepo.deleteById(userId);
+    }
+
+    @Override
+    public User banUser(Long userId) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException(USER_NOT_FOUND));
+
+        user.setEnabled(false);
+
+        return userRepo.save(user);
+    }
+
+    @Override
+    public User updateUser(Long userId, UserDto userDto) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException(USER_NOT_FOUND));
+
+        if (user != null) {
+            user.setUsername(userDto.getUsername());
+            user.setEmail(userDto.getEmail());
+            user.setFirstName(userDto.getFirstName());
+            user.setLastName(userDto.getLastName());
+            user.setRole(userDto.getRole());
+            user.setIin(userDto.getIin());
+            user.setEnabled(userDto.isEnabled());
+
+            return userRepo.save(user);
+        }
+
+        return null;
     }
 }

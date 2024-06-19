@@ -24,4 +24,6 @@ public interface ReservationService {
     List<ReservationDto> getActiveReservations();
 
     Reservation resolveIssue(Long reservationId, ReservationStatusEnum newStatus);
+
+    Reservation canselReservation(Long reservationId);
 }

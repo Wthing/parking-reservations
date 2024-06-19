@@ -39,6 +39,32 @@ public class ParkingServiceImpl implements ParkingService {
     }
 
     @Override
+    public ParkingSpot create(ParkingSpotDto parkingSpotDto) {
+        ParkingSpot parkingSpot = new ParkingSpot();
+        parkingSpot.setStatus(ParkingSpotStatusEnum.FREE);
+        parkingSpot.setLocation(parkingSpotDto.getLocation());
+        parkingSpot.setNumber(parkingSpotDto.getNumber());
+
+        return parkingSpotRepo.save(parkingSpot);
+    }
+
+    @Override
+    public ParkingSpot updateParkingSpot(Long spotId, ParkingSpotDto parkingSpotDto) {
+        ParkingSpot parkingSpot = parkingSpotRepo.findById(spotId)
+                .orElseThrow(() -> new IllegalArgumentException(SPOT_NOT_FOUND));
+
+        if (parkingSpot != null) {
+            parkingSpot.setNumber(parkingSpotDto.getNumber());
+            parkingSpot.setLocation(parkingSpotDto.getLocation());
+            parkingSpot.setStatus(parkingSpotDto.getStatus());
+
+            parkingSpotRepo.save(parkingSpot);
+        }
+
+        return null;
+    }
+
+    @Override
     public ParkingSpot save(ParkingSpotDto parkingSpotDto) {
         return parkingSpotRepo.save(Mappers.toParkingSpot(parkingSpotDto));
     }

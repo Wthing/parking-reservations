@@ -23,4 +23,8 @@ public interface UserService {
     UserDto getById(Long userId);
 
     void deleteById(Long userId);
+
+    User banUser(Long userId);
+
+    User updateUser(Long userId, UserDto userDto);
 }
