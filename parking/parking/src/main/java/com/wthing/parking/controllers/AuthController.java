@@ -1,6 +1,7 @@
 package com.wthing.parking.controllers;
 
 import com.wthing.parking.dto.auth.AuthRequest;
+import com.wthing.parking.dto.auth.AuthenticationRequest;
 import com.wthing.parking.services.implementations.JwtService;
 import com.wthing.parking.services.implementations.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,11 +39,12 @@ public class AuthController {
 
     @Operation(summary = "Авторизация пользователя")
     @PostMapping("/sign-in")
-    public ResponseEntity<String> signIn(@RequestBody @Valid AuthRequest request) {
+    public ResponseEntity<String> signIn(@RequestBody @Valid AuthenticationRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         if (authentication.isAuthenticated()) {
-            return ResponseEntity.ok("Authenticated successfully");
+            String token = jwtService.generateToken(request.getUsername());
+            return ResponseEntity.ok(token);
         } else {
             throw new UsernameNotFoundException("Invalid user request!");
         }
