@@ -11,7 +11,7 @@ public class UserDto {
     private String email;
     private String firstName;
     private String lastName;
-    private AuthoritiesEnum role;
+    private String role;
     private Integer iin;
     private boolean enabled;
 }

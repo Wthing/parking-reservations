@@ -1,46 +1,65 @@
 package com.wthing.parking.services.implementations;
 
 import com.wthing.parking.dto.UserDto;
+import com.wthing.parking.dto.auth.AuthRequest;
 import com.wthing.parking.enums.AuthoritiesEnum;
 import com.wthing.parking.mappers.Mappers;
 import com.wthing.parking.models.User;
 import com.wthing.parking.repositories.UserRepo;
 import com.wthing.parking.services.interfaces.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.wthing.parking.constants.Messages.USER_NOT_FOUND;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepo userRepo;
+    private final PasswordEncoder encoder;
 
-    public UserServiceImpl(UserRepo userRepo) {
+    public UserServiceImpl(UserRepo userRepo, PasswordEncoder encoder) {
         this.userRepo = userRepo;
+        this.encoder = encoder;
     }
+
+
 
     @Override
     public User save(User user) {
         return userRepo.save(user);
     }
 
-    @Override
+    public String addUser(User userInfo) {
+        userInfo.setPassword(encoder.encode(userInfo.getPassword()));
+        userRepo.save(userInfo);
+        return "User Added Successfully";
+    }
+
     public User create(User user) {
-        if (userRepo.existsByUsername(user.getUsername())) {
-            // Заменить на свои исключения
-            throw new RuntimeException("Пользователь с таким именем уже существует");
-        }
+        return userRepo.save(user);
+    }
 
-        if (userRepo.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("Пользователь с таким email уже существует");
-        }
-
-        return save(user);
+    @Override
+    public void registerNewUser(AuthRequest request) {
+        User user = User.builder()
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .password(encoder.encode(request.getPassword()))  // Хешируем пароль перед сохранением
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .iin(request.getIin())
+                .roles("ROLE_USER")
+                .enabled(true)
+                .build();
+        userRepo.save(user);
     }
 
     @Override
@@ -50,21 +69,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDetailsService userDetailsService() {
-        return this::getByUsername;
-    }
-
-    @Override
     public User getCurrentUser() {
         var username = SecurityContextHolder.getContext().getAuthentication().getName();
         return getByUsername(username);
-    }
-
-    @Override
-    public void getAdmin() {
-        var user = getCurrentUser();
-        user.setRole(AuthoritiesEnum.ROLE_ADMIN);
-        save(user);
     }
 
     @Override
@@ -109,7 +116,7 @@ public class UserServiceImpl implements UserService {
             user.setEmail(userDto.getEmail());
             user.setFirstName(userDto.getFirstName());
             user.setLastName(userDto.getLastName());
-            user.setRole(userDto.getRole());
+            user.setRoles(userDto.getRole());
             user.setIin(userDto.getIin());
             user.setEnabled(userDto.isEnabled());
 
@@ -117,5 +124,13 @@ public class UserServiceImpl implements UserService {
         }
 
         return null;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> userDetail = userRepo.findByUsername(username);
+        // Converting userDetail to UserDetails
+        return userDetail.map(UserInfoDetails::new)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found " + username));
     }
 }

@@ -13,7 +13,7 @@ public class Mappers {
         userDto.setFirstName(userDto.getFirstName());
         userDto.setLastName(userDto.getLastName());
         userDto.setIin(userDto.getIin());
-        userDto.setRole(user.getRole());
+        userDto.setRole(user.getRoles());
 
         return userDto;
     }
@@ -25,7 +25,7 @@ public class Mappers {
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
         user.setIin(userDto.getIin());
-        user.setRole(userDto.getRole());
+        user.setRoles(userDto.getRole());
 
         return user;
     }

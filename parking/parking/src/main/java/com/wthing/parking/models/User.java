@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @Builder
 @Table(name = "users")
-public class User implements UserDetails {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -44,9 +44,8 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role")
-    private AuthoritiesEnum role;
+    @Column(name = "roles")
+    private String roles;
 
     @OneToMany(mappedBy = "user")
     private List<Car> cars;
@@ -59,24 +58,4 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user")
     private List<Subscription> subscriptions;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
 }

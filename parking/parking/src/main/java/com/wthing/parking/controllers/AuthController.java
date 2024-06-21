@@ -1,35 +1,50 @@
 package com.wthing.parking.controllers;
 
-import com.wthing.parking.dto.auth.SignInRequest;
-import com.wthing.parking.dto.auth.SignUpRequest;
-import com.wthing.parking.services.jwtauth.AuthenticationService;
+import com.wthing.parking.dto.auth.AuthRequest;
+import com.wthing.parking.services.implementations.JwtService;
+import com.wthing.parking.services.implementations.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping("/auth")
-@RequiredArgsConstructor
-@Tag(name = "Аутентификация")
 public class AuthController {
-    private final AuthenticationService authenticationService;
+    private final UserServiceImpl userService;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+
+    public AuthController(UserServiceImpl userService, JwtService jwtService, AuthenticationManager authenticationManager) {
+        this.userService = userService;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
+    }
 
     @Operation(summary = "Регистрация пользователя")
     @PostMapping("/sign-up")
-    public String signUp(@RequestBody @Valid SignUpRequest request) {
-        authenticationService.signUp(request);
-        return "redirect";
+    public ResponseEntity<String> signUp(@RequestBody @Valid AuthRequest request) {
+        userService.registerNewUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
     }
 
     @Operation(summary = "Авторизация пользователя")
     @PostMapping("/sign-in")
-    public String signIn(@RequestBody @Valid SignInRequest request) {
-        authenticationService.signIn(request);
-        return "redirect";
+    public ResponseEntity<String> signIn(@RequestBody @Valid AuthRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        if (authentication.isAuthenticated()) {
+            return ResponseEntity.ok("Authenticated successfully");
+        } else {
+            throw new UsernameNotFoundException("Invalid user request!");
+        }
     }
 }
