@@ -3,7 +3,6 @@ package com.wthing.parking.services.interfaces;
 import com.wthing.parking.dto.UserDto;
 import com.wthing.parking.dto.auth.AuthRequest;
 import com.wthing.parking.models.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
@@ -26,4 +25,6 @@ public interface UserService {
     User banUser(Long userId);
 
     User updateUser(Long userId, UserDto userDto);
+
+    boolean userExists(String username);
 }

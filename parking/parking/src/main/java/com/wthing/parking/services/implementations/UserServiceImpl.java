@@ -2,7 +2,6 @@ package com.wthing.parking.services.implementations;
 
 import com.wthing.parking.dto.UserDto;
 import com.wthing.parking.dto.auth.AuthRequest;
-import com.wthing.parking.enums.AuthoritiesEnum;
 import com.wthing.parking.mappers.Mappers;
 import com.wthing.parking.models.User;
 import com.wthing.parking.repositories.UserRepo;
@@ -124,6 +123,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
 
         return null;
+    }
+
+    @Override
+    public boolean userExists(String username) {
+        return userRepo.findByUsername(username).isPresent();
     }
 
     @Override
