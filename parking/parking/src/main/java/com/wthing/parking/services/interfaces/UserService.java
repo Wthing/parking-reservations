@@ -27,4 +27,6 @@ public interface UserService {
     User updateUser(Long userId, UserDto userDto);
 
     boolean userExists(String username);
+
+    User makeUserAnOperator(Long id, UserDto userDto);
 }

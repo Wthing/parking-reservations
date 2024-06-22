@@ -17,23 +17,48 @@ public class AppInitializer {
     @Bean
     public CommandLineRunner init() {
         return args -> {
-            String adminUsername = "admin";
-            if (!userService.userExists(adminUsername)) {
-                User admin = User.builder()
-                        .username(adminUsername)
-                        .email("admin@example.com")
-                        .password(passwordEncoder.encode("adminpass"))
-                        .firstName("Maximiliano")
-                        .lastName("Lecstapperc")
-                        .iin(1234567890)
-                        .roles("ROLE_ADMIN")
-                        .enabled(true)
-                        .build();
-                userService.create(admin);
-                System.out.println("Admin user created: " + adminUsername);
-            } else {
-                System.out.println("Admin user already exists: " + adminUsername);
-            }
+            createAdminUser();
+            createParkingOperatorUser();
         };
+    }
+
+    private void createAdminUser() {
+        String adminUsername = "admin";
+        if (!userService.userExists(adminUsername)) {
+            User admin = User.builder()
+                    .username(adminUsername)
+                    .email("admin@example.com")
+                    .password(passwordEncoder.encode("adminpass"))
+                    .firstName("Admin")
+                    .lastName("User")
+                    .iin(1234567890)
+                    .roles("ROLE_ADMIN")
+                    .enabled(true)
+                    .build();
+            userService.create(admin);
+            System.out.println("Admin user created: " + adminUsername);
+        } else {
+            System.out.println("Admin user already exists: " + adminUsername);
+        }
+    }
+
+    private void createParkingOperatorUser() {
+        String operatorUsername = "operator";
+        if (!userService.userExists(operatorUsername)) {
+            User operator = User.builder()
+                    .username(operatorUsername)
+                    .email("operator@example.com")
+                    .password(passwordEncoder.encode("operatorpass"))
+                    .firstName("Operator")
+                    .lastName("User")
+                    .iin(1234567891)
+                    .roles("ROLE_PARKING_OPERATOR")
+                    .enabled(true)
+                    .build();
+            userService.create(operator);
+            System.out.println("Parking operator user created: " + operatorUsername);
+        } else {
+            System.out.println("Parking operator user already exists: " + operatorUsername);
+        }
     }
 }

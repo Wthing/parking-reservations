@@ -40,7 +40,7 @@ public class ReservationController {
 
     @Operation(summary = "Создать бронь")
     @PostMapping
-    public Reservation createReservation(ReservationDto reservationDto) {
+    public Reservation createReservation(@RequestBody ReservationDto reservationDto) {
         return reservationService.create(reservationDto);
     }
 

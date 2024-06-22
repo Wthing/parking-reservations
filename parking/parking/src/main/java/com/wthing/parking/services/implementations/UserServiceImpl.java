@@ -131,6 +131,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public User makeUserAnOperator(Long id, UserDto userDto) {
+        User user = userRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException(USER_NOT_FOUND));
+
+        if (user != null) {
+            user.setRoles(userDto.getRole());
+            return userRepo.save(user);
+        }
+        return null;
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> userDetail = userRepo.findByUsername(username);
         // Converting userDetail to UserDetails
