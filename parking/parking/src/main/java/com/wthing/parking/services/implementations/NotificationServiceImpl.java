@@ -7,6 +7,7 @@ import com.wthing.parking.models.User;
 import com.wthing.parking.repositories.NotificationRepo;
 import com.wthing.parking.repositories.UserRepo;
 import com.wthing.parking.services.interfaces.NotificationService;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 import static com.wthing.parking.constants.Messages.*;
 
+@Service
 public class NotificationServiceImpl implements NotificationService {
     private final NotificationRepo notificationRepo;
     private final UserRepo userRepo;
@@ -51,9 +53,10 @@ public class NotificationServiceImpl implements NotificationService {
             notification.setUser(user);
             notification.setMessage(notificationDto.getMessage());
             notification.setTimestamp(LocalDateTime.now());
+            return notificationRepo.save(notification);
         }
 
-        return notification;
+        return null;
     }
 
     @Override
